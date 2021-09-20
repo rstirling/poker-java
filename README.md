@@ -30,6 +30,8 @@ Sonar plugin submits source code and Jacoco reports to a Sonar server (localhost
 ## Libraries
 This project uses the following libraries:
 * Lombok
+* Log4J2
+* Slf4J
 * JUnit
 * Mockito
 * Spock
