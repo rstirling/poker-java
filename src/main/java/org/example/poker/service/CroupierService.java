@@ -22,10 +22,22 @@ public class CroupierService {
     @NonNull
     private DeckService deckService;
 
+    /**
+     * Takes 5 Cards from Deck
+     *
+     * @return a List containing 5 Cards
+     */
     public List<Card> getHand() {
         return deckService.takeCards(5);
     }
 
+    /**
+     * Evaluate a hand of cards and returns a Hand-Rank Category
+     * Based on https://en.wikipedia.org/wiki/List_of_poker_hands
+     *
+     * @param hand
+     * @return Category
+     */
     public Category getCategory(List<Card> hand) {
 
         final Set<Suit> suits = new HashSet<>();
@@ -36,22 +48,20 @@ public class CroupierService {
             ranks.add(card.getRank());
         }
 
-        final var handRanks = getSortedHands(hand);
+        final var handRanks = getSortedHandRanks(hand);
 
         int handRankCount = handRanks.size();
 
-        Category category;
-
         if (handRankCount == 5) {
-            category = getFiveRanksCategory(suits, handRanks);
+            return getFiveRanksCategory(suits, handRanks);
         } else if (handRankCount == 4) {
-            category = ONE_PAIR;
+            return ONE_PAIR;
         } else if (handRankCount == 3) {
-            category = getThreeRanksCategory(ranks);
+            return getThreeRanksCategory(ranks);
         } else if (hand.contains(Card.JOKER) && handRanks.size() == 1) {
-            category = FIVE_OF_A_KIND;
+            return FIVE_OF_A_KIND;
         } else {
-            category = ranks.stream()
+            return ranks.stream()
                     .filter(Objects::nonNull)
                     .collect(Collectors.groupingBy(r -> r))
                     .entrySet()
@@ -59,7 +69,6 @@ public class CroupierService {
                     .anyMatch(r -> r.getValue().size() == 3) ? FULL_HOUSE : FOUR_OF_A_KIND;
         }
 
-        return category;
     }
 
     private Category getThreeRanksCategory(List<Rank> ranks) {
@@ -104,6 +113,7 @@ public class CroupierService {
         final var categoryHand1 = getCategory(hand1);
         log.debug("Hand2 category[{}] - cards{}", categoryHand1, hand1);
 
+        //High Cards power are evaluated differently
         if (categoryHand0.equals(categoryHand1) && categoryHand0.equals(HIGH_CARD)) {
 
             return compareHighHands(hand0, hand1);
@@ -129,13 +139,14 @@ public class CroupierService {
 
     /**
      * Compares two high-hands based on ranks.
+     *
      * @param hand0
      * @param hand1
      * @return 1 if hand0 wins, -1 if hand1 wins and 0 if equal
      */
     private int compareHighHands(List<Card> hand0, List<Card> hand1) {
-        final var sortedHand0 = getSortedHands(hand0);
-        final var sortedHand1 = getSortedHands(hand1);
+        final var sortedHand0 = getSortedHandRanks(hand0);
+        final var sortedHand1 = getSortedHandRanks(hand1);
 
         int count = 0;
         int result = 0;
@@ -144,19 +155,18 @@ public class CroupierService {
             final var rank0 = sortedHand0.get(count).ordinal();
             final var rank1 = sortedHand1.get(count).ordinal();
 
-            if (rank0 > rank1) {
-                result = 1;
-                break;
-            } else if (rank0 < rank1) {
-                result = -1;
+            result = Integer.compare(rank0, rank1);
+
+            if (result != 0) {
                 break;
             }
+
             count++;
         }
         return result;
     }
 
-    private List<Rank> getSortedHands(List<Card> hand0) {
+    private List<Rank> getSortedHandRanks(List<Card> hand0) {
         return hand0.stream()
                 .map(Card::getRank)
                 .filter(Objects::nonNull)
