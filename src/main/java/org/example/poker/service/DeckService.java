@@ -1,7 +1,6 @@
 package org.example.poker.service;
 
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.poker.model.Card;
 
@@ -73,6 +72,9 @@ public class DeckService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Resets the deck for a new round
+     */
     public void resetDeck() {
         deck = Arrays.asList(Card.values());
         if (!wildCardEnabled) {

@@ -160,4 +160,23 @@ class CroupierServiceSpec extends Specification {
         "STRAIGHT_FLUSH_VS_FOUR_OF_A_KIND" | 1      | [Card.JACK_DIAMONDS, Card.TEN_DIAMONDS, Card.NINE_DIAMONDS, Card.EIGHT_DIAMONDS, Card.SEVEN_DIAMONDS] | [Card.FIVE_CLUBS, Card.FIVE_DIAMONDS, Card.FIVE_HEARTS, Card.FIVE_SPADES, Card.SEVEN_DIAMONDS]
         "TWO_PAIR_VS_THREE_OF_A_KIND"      | -1     | [Card.JACK_HEARTS, Card.JACK_SPADES, Card.THREE_CLUBS, Card.THREE_SPADES, Card.TWO_HEARTS]            | [Card.SIX_SPADES, Card.SIX_HEARTS, Card.SIX_DIAMONDS, Card.KING_CLUBS, Card.QUEEN_CLUBS]
     }
+
+
+    @Unroll
+    def "Compare hands with error - Should return an IllegalArgumentException"() {
+        when:
+        croupierService.compareHands(hand0, hand1)
+
+        then:
+        thrown(IllegalArgumentException)
+
+        where:
+        hand0 | hand1
+        null  | []
+        []    | null
+        []    | [Card.NINE_SPADES]
+
+
+    }
+
 }
