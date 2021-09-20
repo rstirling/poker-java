@@ -307,4 +307,20 @@ class CroupierServiceTest {
 
         Assertions.assertEquals(-1, winnerHand);
     }
+
+    @Test
+    @DisplayName("Compare hands with error - Should return an IllegalArgumentException")
+    void getCompareErrors() {
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> croupierService.compareHands(null, List.of()));
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> croupierService.compareHands(List.of(), null));
+
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () -> croupierService.compareHands(List.of(), List.of(Card.NINE_SPADES)));
+
+
+    }
 }
