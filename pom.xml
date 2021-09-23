@@ -20,8 +20,7 @@
         <sonar.language>java</sonar.language>
         <sonar.login>2e5da3ca36546f1c138d87964e074996adb925ea</sonar.login>
         <sonar.projectKey>poker-java</sonar.projectKey>
-        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../target/site/jacoco/jacoco.xml
-        </sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.exclusions>**/*Main.java</sonar.exclusions>
     </properties>
 
     <build>
